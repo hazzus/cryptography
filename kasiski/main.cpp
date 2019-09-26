@@ -1,89 +1,89 @@
-#include "encryptor.h"
-#include <boost/bimap.hpp>
 #include <fstream>
 #include <iostream>
+
+#include "decryptor.h"
 #include <map>
-#include <set>
-
-std::set<size_t> get_distances(std::string const& encrypted) {
-    if (encrypted.size() < 3) {
-        return {};
-    }
-    std::set<size_t> distances;
-    for (size_t substr_len = 3;; substr_len++) {
-        bool was = false;
-        for (size_t i = 0; i < encrypted.size() - substr_len; i++) {
-            std::string current_substr = encrypted.substr(i, substr_len);
-            size_t start = i + 1;
-            std::vector<size_t> curs{start};
-            while ((start = encrypted.find(current_substr, start)) !=
-                   std::string::npos) {
-                curs.push_back(start);
-                start += 1;
-            }
-            if (curs.size() > 1) {
-                was = true;
-                for (size_t i = curs.size() - 1; i > 1; i--) {
-                    distances.insert(curs[i] - curs[i - 1]);
-                }
-            }
-        }
-        if (!was)
-            break;
-    }
-    return distances;
-}
-
-size_t gcd(size_t a, size_t b) {
-    if (b == 0)
-        return a;
-    else
-        return gcd(b, a % b);
-}
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "No file with message for encryption provided";
-        return -1;
+    if (argc != 2) {
+        std::cerr << "Usage: ./kasiski <encrypted file>" << std::endl;
+        return 1;
     }
-
     std::ifstream fin(argv[1]);
-    // FIXME big files reading
-    std::string encrypted((std::istreambuf_iterator<char>(fin)),
-                          std::istreambuf_iterator<char>());
-
-    auto res = get_distances(encrypted);
-    std::cout << "Distances: ";
-    for (size_t i : res) {
+    std::string encrypted{std::istreambuf_iterator<char>(fin),
+                          std::istreambuf_iterator<char>()};
+    std::string test_part =
+        encrypted.substr(0, std::min<size_t>(100, encrypted.size()));
+    std::cout << "==== Part of encrypted message ====" << std::endl;
+    std::cout << test_part << std::endl;
+    std::cout << "===================================" << std::endl;
+    decryptor decr;
+    auto possible_len = decr.kasiski_exam(encrypted);
+    std::cout << "Key lengths in posibility order: ";
+    for (size_t i : possible_len) {
         std::cout << i << " ";
     }
-    std::cout << "\n";
-    std::map<size_t, size_t> gcds;
-    for (auto it = res.begin(); it != res.end()--; it++) {
-        auto jt = it;
-        for (jt++; jt != res.end(); jt++) {
-            size_t cur_gcd = gcd(*it, *jt);
-            auto gt = gcds.find(cur_gcd);
-            if (gt == gcds.end()) {
-                gcds[cur_gcd] = 1;
-            } else {
-                gcds[cur_gcd]++;
+    std::cout << std::endl;
+    std::cout << "Using english frequencies" << std::endl;
+    std::string eng = "etaoinshrdlcumwfgypbvkjxqz";
+    for (size_t len : possible_len) {
+        std::cout << "==== Trying key length " << len << " ====" << std::endl;
+        std::vector<size_t> replacement(len);
+
+        for (size_t start = 0; start < len; start++) {
+            std::cout << "Possible key for position " << start << ": ";
+            std::vector<std::pair<size_t, size_t>> counter(26);
+            for (size_t i = 0; i < 26; i++) {
+                counter[i].first = i;
             }
+            for (size_t x = start; x < encrypted.size(); x += len) {
+                counter[encrypted[x] - 'a'].second++;
+            }
+            std::sort(counter.begin(), counter.end(),
+                      [](auto a, auto b) { return a.second > b.second; });
+            std::vector<size_t> dist_count(26);
+            for (size_t i = 0; i < 26; i++) {
+                int diff = (int)counter[i].first - (int)(eng[i] - 'a');
+                if (diff < 0)
+                    diff += 26;
+                dist_count[diff]++;
+            }
+            size_t maxi = 0;
+            for (size_t i = 1; i < 26; i++) {
+                if (dist_count[maxi] < dist_count[i]) {
+                    maxi = i;
+                }
+            }
+            std::cout << maxi;
+            replacement[start] = maxi;
+            std::cout << std::endl;
+        }
+        std::cout << "==== Decrypted part of encrypted message ===="
+                  << std::endl;
+        for (size_t i = 0; i < test_part.size(); i++) {
+            int a = (int)(test_part[i] - 'a') - (int)replacement[i % len];
+            if (a < 0)
+                a += 26;
+            std::cout << (char)(a + 'a');
+        }
+        std::cout << std::endl;
+        std::cout << "Is encrypted part ok? [y/n] (Else next possible key "
+                     "length will be used)"
+                  << std::endl;
+        char c;
+        std::cin >> c;
+        if (c == 'y') {
+            std::cout << "Answer written to answer.txt";
+            std::ofstream fout("answer.txt");
+            for (size_t i = 0; i < encrypted.size(); i++) {
+                int a = (int)(test_part[i] - 'a') - (int)replacement[i % len];
+                if (a < 0)
+                    a += 26;
+                fout << (char)(a + 'a');
+            }
+            break;
         }
     }
-    std::vector<std::pair<size_t, size_t>> elements(gcds.begin(), gcds.end());
-    std::partial_sort(
-        elements.begin(),
-        ((5 > elements.size()) ? elements.end() : elements.begin() + 5),
-        elements.end(),
-        [](std::pair<size_t, size_t> a, std::pair<size_t, size_t> b) {
-            return a.second > b.second;
-        });
-    std::cout << "Most possible columns amounts: ";
-    for (auto p = elements.begin();
-         p != elements.end() && p != elements.begin() + 5; p++) {
-        std::cout << p->first << " ";
-    }
-    // TODO add konsole-based statistics examination
-    std::cout << std::endl;
+
+    return 0;
 }

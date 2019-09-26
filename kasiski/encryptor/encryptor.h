@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <array>
+#include <istream>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -13,23 +15,17 @@ struct wrong_message_exception : public std::runtime_error {
 };
 
 struct encryptor {
-    encryptor(std::vector<size_t> const& shifts,
-              std::string const& alphabet = "abcdefghijkllmnopqrstuvwxyz");
+    encryptor(std::vector<size_t> const& shifts);
     encryptor(encryptor const&) = default;
     encryptor(encryptor&&) = default;
 
     std::string encrypt(std::string const& message);
-    std::vector<size_t> encrypt(std::vector<size_t> const& message);
+    void encrypt(std::istream& in, std::ostream& out);
 
     void set_alphabet(std::string const& alphabet);
     void set_shifts(std::vector<size_t> const& shifts);
 
   private:
-    std::vector<size_t> __convert(std::string const& message);
-    void __set_reversed_alphabet();
-
-    std::string alphabet;
-    std::array<size_t, 256> reversed_alphabet;
     std::vector<size_t> shifts;
 };
 
