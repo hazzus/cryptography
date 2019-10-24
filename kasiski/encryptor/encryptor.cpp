@@ -12,8 +12,7 @@ std::string encryptor::encrypt(const std::string& message) {
         if (!is_alpha(message[i]))
             continue;
         char c_rep = ((message[i] | 0x20) - 'a');
-        size_t cur_shift = shifts[counter % shifts.size()];
-        counter++;
+        size_t cur_shift = shifts[counter++ % shifts.size()];
         res.push_back((c_rep + cur_shift) % 26 + 'a');
     }
     return res;

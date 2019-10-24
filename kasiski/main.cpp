@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
             std::sort(counter.begin(), counter.end(),
                       [](auto a, auto b) { return a.second > b.second; });
             std::vector<size_t> dist_count(26);
+
             for (size_t i = 0; i < 26; i++) {
                 int diff = (int)counter[i].first - (int)(eng[i] - 'a');
                 if (diff < 0)
@@ -76,7 +77,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Answer written to answer.txt";
             std::ofstream fout("answer.txt");
             for (size_t i = 0; i < encrypted.size(); i++) {
-                int a = (int)(test_part[i] - 'a') - (int)replacement[i % len];
+                int a = (int)(encrypted[i] - 'a') - (int)replacement[i % len];
                 if (a < 0)
                     a += 26;
                 fout << (char)(a + 'a');

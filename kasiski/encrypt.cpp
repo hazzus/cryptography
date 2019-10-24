@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
         std::cout << e.what() << std::endl;
         return 0;
     }
-    std::cout << "Encrypted version: " << std::endl;
-    std::cout << encrypted << std::endl;
+    // std::cout << "Encrypted version: " << std::endl;
+    // std::cout << encrypted << std::endl;
 
     std::ofstream fout(argv[2]);
     fout << encrypted;

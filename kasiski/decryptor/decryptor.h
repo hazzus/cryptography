@@ -14,8 +14,6 @@ class decryptor {
     static std::vector<size_t> kasiski_exam(std::string const& encrypted);
 
   private:
-    void __set_reversed_alphabet();
-
     static std::unordered_map<std::string, std::vector<size_t>>
     get_positions(std::string const& encrypted);
 
@@ -23,7 +21,6 @@ class decryptor {
         std::unordered_map<std::string, std::vector<size_t>> const& positions);
 
     std::string alphabet;
-    std::array<size_t, 256> reversed_alphabet;
 };
 
 #endif // DECRYPTOR_H

@@ -1,8 +1,6 @@
 #include "decryptor.h"
 
-decryptor::decryptor(std::string const& alphabet) : alphabet(alphabet) {
-    __set_reversed_alphabet();
-}
+decryptor::decryptor(std::string const& alphabet) : alphabet(alphabet) {}
 
 std::vector<size_t> decryptor::kasiski_exam(const std::string& encrypted) {
     auto distances = get_distances(get_positions(encrypted));
@@ -21,13 +19,6 @@ std::vector<size_t> decryptor::kasiski_exam(const std::string& encrypted) {
     std::transform(delim_count.begin(), delim_count.end(),
                    std::back_inserter(result), [](auto p) { return p.first; });
     return result;
-}
-
-void decryptor::__set_reversed_alphabet() {
-    reversed_alphabet.fill(alphabet.size());
-    for (size_t i = 0; i < alphabet.size(); i++) {
-        reversed_alphabet[static_cast<size_t>(alphabet[i])] = i;
-    }
 }
 
 std::unordered_map<std::string, std::vector<size_t>>
