@@ -22,9 +22,10 @@ int main(int argc, char* argv[]) {
     std::ifstream in(argv[1], std::ios::binary);
     std::ofstream out(argv[2], std::ios::binary);
     while (!in.eof()) {
-        std::string buffer(256, '\0');
-        in.read(buffer.data(), 256);
-        out << enc.encode(buffer);
+        std::vector<unsigned char> buffer(256);
+        in.read(reinterpret_cast<char*>(buffer.data()), 256);
+        buffer.resize(in.gcount());
+        out << enc.encode(std::string{buffer.begin(), buffer.end()});
     }
     return 0;
 }
