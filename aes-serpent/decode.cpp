@@ -14,8 +14,7 @@ int main(int argc, char* argv[]) {
     }
     size_t key_len = std::strlen(argv[3]);
     if (key_len != 16 && key_len != 24 && key_len != 32) {
-        std::cerr << "Key length " << key_len << " is not allowed"
-                  << "Allowed key lengths: 16, 24, 32" << std::endl;
+        std::cerr << "Key length " << key_len << " is not allowed. Allowed key lengths: 16, 24, 32" << std::endl;
         return -1;
     }
     serpent::decoder dec(argv[3]);
