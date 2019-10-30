@@ -21,7 +21,7 @@ struct decoder {
 
     std::string decode(std::string message);
 
-    void decode(std::istream const& in, std::ostream const& out);
+    void decode(std::istream& in, std::ostream& out);
 
   private:
     std::array<std::bitset<128>, 33> keys;

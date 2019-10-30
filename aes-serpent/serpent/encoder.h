@@ -21,7 +21,7 @@ struct encoder {
 
     std::string encode(std::string message);
 
-    void encode(std::istream const& in, std::ostream const& out);
+    void encode(std::istream& in, std::ostream& out);
 
   private:
     std::array<std::bitset<128>, 33> keys;

@@ -51,18 +51,11 @@ std::bitset<32> cshl(std::bitset<32> const& val, size_t shift);
 
 std::bitset<32> shl(std::bitset<32> const& val, size_t shift);
 
-std::array<std::bitset<32>, 4> S(std::array<std::bitset<32>, 4> const& words, size_t round);
+std::array<std::bitset<32>, 4> S(std::array<std::bitset<32>, 4> const& words, size_t round, bool inverse = false);
 
-std::array<std::bitset<32>, 4> S1(std::bitset<128> const& message, size_t round);
+std::array<std::bitset<32>, 4> S1(std::bitset<128> const& message, size_t round, bool inverse = false);
 
-std::bitset<128> S(std::bitset<128> const& message, size_t round);
-
-// TODO S and invS are same except table
-std::array<std::bitset<32>, 4> invS(std::array<std::bitset<32>, 4> const& words, size_t round);
-
-std::array<std::bitset<32>, 4> invS1(std::bitset<128> const& message, size_t round);
-
-std::bitset<128> invS(std::bitset<128> const& message, size_t round);
+std::bitset<128> S(std::bitset<128> const& message, size_t round, bool inverse = false);
 
 void generate_keys(std::bitset<256> const& real, std::array<std::bitset<128>, 33>& keys);
 

@@ -48,8 +48,8 @@ std::bitset<32> shl(std::bitset<32> const& val, size_t shift) {
     return res;
 }
 
-std::array<std::bitset<32>, 4> S(std::array<std::bitset<32>, 4> const& words, size_t round) {
-    auto current_s = table::S[round % 8];
+std::array<std::bitset<32>, 4> S(std::array<std::bitset<32>, 4> const& words, size_t round, bool inverse) {
+    auto current_s = (inverse) ? table::INV_S[round % 8] : table::S[round % 8];
     std::array<std::bitset<32>, 4> result;
     for (size_t i = 0; i < 4; i++) {
         uint32_t cur = words[i].to_ulong();
@@ -65,42 +65,13 @@ std::array<std::bitset<32>, 4> S(std::array<std::bitset<32>, 4> const& words, si
     return result;
 }
 
-std::array<std::bitset<32>, 4> S1(std::bitset<128> const& message, size_t round) {
+std::array<std::bitset<32>, 4> S1(std::bitset<128> const& message, size_t round, bool inverse) {
     auto splited = split<4>(message);
-    return S(splited, round);
+    return S(splited, round, inverse);
 }
 
-std::bitset<128> S(std::bitset<128> const& message, size_t round) {
-    auto res = S1(message, round);
-    return res[0] + res[1] + res[2] + res[3];
-}
-
-// TODO S and invS are same except table
-std::array<std::bitset<32>, 4> invS(std::array<std::bitset<32>, 4> const& words, size_t round) {
-    auto current_s = table::INV_S[round % 8];
-    std::array<std::bitset<32>, 4> result;
-    for (size_t i = 0; i < 4; i++) {
-        uint32_t cur = words[i].to_ulong();
-        uint32_t res = 0;
-        for (size_t j = 0; j < 4; j++) {
-            unsigned char byte = (cur >> (8 * j)) & 0xff;
-            unsigned char lower = byte >> 4;
-            unsigned char upper = byte & 0x0f;
-            res |= ((current_s[lower] << 4) | (current_s[upper])) << ((3 - j) * 8);
-        }
-        result[i] = std::bitset<32>(res);
-    }
-    return result;
-    ;
-}
-
-std::array<std::bitset<32>, 4> invS1(std::bitset<128> const& message, size_t round) {
-    auto splited = split<4>(message);
-    return invS(splited, round);
-}
-
-std::bitset<128> invS(std::bitset<128> const& message, size_t round) {
-    auto res = invS1(message, round);
+std::bitset<128> S(std::bitset<128> const& message, size_t round, bool inverse) {
+    auto res = S1(message, round, inverse);
     return res[0] + res[1] + res[2] + res[3];
 }
 

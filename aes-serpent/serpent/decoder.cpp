@@ -4,7 +4,7 @@
 
 serpent::decoder::decoder(std::string const& key) {
     if (key.size() > 32 || key.size() < 8) {
-        // TODO throw 1; do sm
+        throw std::runtime_error("Wrong key size");
     }
     std::bitset<256> real = convert_key(key);
     generate_keys(real, keys);
@@ -12,9 +12,9 @@ serpent::decoder::decoder(std::string const& key) {
 
 std::bitset<128> serpent::decoder::decode(std::bitset<128> const& message) {
     std::bitset<128> result = permute(message, table::IP);
-    result = invS(result ^ keys[32], 31) ^ keys[31];
+    result = S(result ^ keys[32], 31, true) ^ keys[31];
     for (int i = 30; i >= 0; i--) {
-        result = invS(inv_linear(result), i) ^ keys[i];
+        result = S(inv_linear(result), i, true) ^ keys[i];
     }
     result = permute(result, table::FP);
     return result;
@@ -30,4 +30,13 @@ std::string serpent::decoder::decode(std::string message) {
         result += from_block(block);
     }
     return result;
+}
+
+void serpent::decoder::decode(std::istream& in, std::ostream& out) {
+    while (!in.eof()) {
+        std::vector<unsigned char> buffer(256);
+        in.read(reinterpret_cast<char*>(buffer.data()), 256);
+        buffer.resize(static_cast<size_t>(in.gcount()));
+        out << decode(std::string{buffer.begin(), buffer.end()});
+    }
 }

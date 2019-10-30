@@ -4,7 +4,7 @@
 
 serpent::encoder::encoder(std::string const& key) {
     if (key.size() > 32 || key.size() < 8) {
-        // TODO throw 1; do sm
+        throw std::runtime_error("Wrong key size");
     }
     std::bitset<256> real = convert_key(key);
     generate_keys(real, keys);
@@ -32,4 +32,13 @@ std::string serpent::encoder::encode(std::string message) {
         result += from_block(block);
     }
     return result;
+}
+
+void serpent::encoder::encode(std::istream& in, std::ostream& out) {
+    while (!in.eof()) {
+        std::vector<unsigned char> buffer(256);
+        in.read(reinterpret_cast<char*>(buffer.data()), 256);
+        buffer.resize(static_cast<size_t>(in.gcount()));
+        out << encode(std::string{buffer.begin(), buffer.end()});
+    }
 }

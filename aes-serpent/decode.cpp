@@ -20,11 +20,6 @@ int main(int argc, char* argv[]) {
     serpent::decoder dec(argv[3]);
     std::ifstream in(argv[1], std::ios::binary);
     std::ofstream out(argv[2], std::ios::binary);
-    while (!in.eof()) {
-        std::vector<unsigned char> buffer(256);
-        in.read(reinterpret_cast<char*>(buffer.data()), 256);
-        buffer.resize(in.gcount());
-        out << dec.decode(std::string{buffer.begin(), buffer.end()});
-    }
+    dec.decode(in, out);
     return 0;
 }
