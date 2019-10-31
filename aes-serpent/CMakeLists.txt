@@ -18,8 +18,17 @@ add_library(serpent
     serpent/utils.cpp
     )
 
+
+
+
 add_executable(serpent-encode encode.cpp)
 add_executable(serpent-decode decode.cpp)
+add_executable(serpent-test
+        gtest/gtest_main.cc
+        gtest/gtest-all.cc
+        gtest/gtest.h
+        gtest/serpent_testing.cpp)
 
 target_link_libraries(serpent-encode serpent)
 target_link_libraries(serpent-decode serpent)
+target_link_libraries(serpent-test serpent)

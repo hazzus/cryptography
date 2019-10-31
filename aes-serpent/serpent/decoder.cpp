@@ -29,7 +29,11 @@ std::string serpent::decoder::decode(std::string message) {
         block = decode(block);
         result += from_block(block);
     }
-    return result;
+    int i = result.size() - 1;
+    while (result[i] == '\0'){
+        i--;
+    }
+    return result.substr(0,i + 1);
 }
 
 void serpent::decoder::decode(std::istream& in, std::ostream& out) {
