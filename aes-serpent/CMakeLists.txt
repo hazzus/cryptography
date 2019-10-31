@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native" )
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -march=native " )
 
 add_library(serpent
     serpent/decoder.h
@@ -31,4 +31,4 @@ add_executable(serpent-test
 
 target_link_libraries(serpent-encode serpent)
 target_link_libraries(serpent-decode serpent)
-target_link_libraries(serpent-test serpent)
+target_link_libraries(serpent-test serpent -lpthread)

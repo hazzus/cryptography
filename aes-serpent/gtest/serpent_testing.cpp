@@ -2,16 +2,16 @@
 // Created by Mike Terentyev on 09/05/18.
 //
 
+#include "../serpent/decoder.h"
+#include "../serpent/encoder.h"
+#include "gtest.h"
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
-#include <vector>
+#include <fstream>
 #include <string>
 #include <utility>
-#include <fstream>
-#include "gtest.h"
-#include "../serpent/decoder.h"
-#include "../serpent/encoder.h"
+#include <vector>
 
 using namespace std;
 
@@ -21,27 +21,33 @@ void commontest(const string& message, const string& key) {
     EXPECT_EQ(message, dec.decode(enc.encode(message)));
 }
 
-
-TEST(correctness, small1) {
-    commontest("HI! LET'S TEST SERPENT SERPENT SERPENT", "cryptograhpyis<3");
-}
+TEST(correctness, small1) { commontest("HI! LET'S TEST SERPENT SERPENT SERPENT", "cryptograhpyis<3"); }
 
 TEST(correctness, small2) {
-    commontest("Google Test. OSS Builds Status: Build status. Announcements: Release 1.10.x. Release 1.10.x is now available. Coming Soon. Post 1.10.x ", "OpenCppCoverageO");
+    commontest(
+        "Google Test. OSS Builds Status: Build status. Announcements: Release 1.10.x. Release 1.10.x is now available. Coming Soon. Post 1.10.x ",
+        "OpenCppCoverageO");
 }
 
-TEST(correctness, small3) {
-    commontest("Stroustrup has been a noble doctor at ITMO University since 2013.", "BjarneStroustrup");
-}
+TEST(correctness, small3) { commontest("Stroustrup has been a noble doctor at ITMO University since 2013.", "BjarneStroustrup"); }
 
 TEST(correctness, big) {
-    commontest("Stroustrup began developing C++ in 1979 (then called \"C with Classes\"), and, in his own words, \"invented C++, wrote its early definitions, and produced its first implementation... chose and formulated the design criteria for C++, designed all its major facilities, and was responsible for the processing of extension proposals in the C++ standards committee.\"[13] Stroustrup also wrote a textbook for the language in 1985, The C++ Programming Language.[14][15]\n"
-               "\n"
-               "Stroustrup was the head of AT&T Bell Labs' Large-scale Programming Research department, from its creation until late 2002. Stroustrup was elected member of the National Academy of Engineering in 2004. He was elected a Fellow of the Association for Computing Machinery (ACM) in 1994 and the Institute of Electrical and Electronics Engineers (IEEE).[when?] From 2002 to 2014, Stroustrup was the College of Engineering Chair in Computer Science Professor at Texas A&M University.[16][17] As of January 2014, Stroustrup is a Managing Director in the technology division of Morgan Stanley in New York City and a Visiting Professor in Computer Science at Columbia University.", "BjarneStroustrup");
+    commontest(
+        "Stroustrup began developing C++ in 1979 (then called \"C with Classes\"), and, in his own words, \"invented C++, wrote its early "
+        "definitions, and produced its first implementation... chose and formulated the design criteria for C++, designed all its major facilities, "
+        "and was responsible for the processing of extension proposals in the C++ standards committee.\"[13] Stroustrup also wrote a textbook for "
+        "the language in 1985, The C++ Programming Language.[14][15]\n"
+        "\n"
+        "Stroustrup was the head of AT&T Bell Labs' Large-scale Programming Research department, from its creation until late 2002. Stroustrup was "
+        "elected member of the National Academy of Engineering in 2004. He was elected a Fellow of the Association for Computing Machinery (ACM) in "
+        "1994 and the Institute of Electrical and Electronics Engineers (IEEE).[when?] From 2002 to 2014, Stroustrup was the College of Engineering "
+        "Chair in Computer Science Professor at Texas A&M University.[16][17] As of January 2014, Stroustrup is a Managing Director in the "
+        "technology division of Morgan Stanley in New York City and a Visiting Professor in Computer Science at Columbia University.",
+        "BjarneStroustrup");
 }
 
 TEST(correctness, bigbig) {
-    commontest(R"(t was bright and sunny. A fine rain had been falling all the
+    commontest(R"(It was bright and sunny. A fine rain had been falling all the
 morning, and now it had not long cleared up. The iron roofs, the
 flags of the roads, the flints of the pavements, the wheels and
 leather, the brass and the tinplate of the carriages--all
@@ -109,5 +115,6 @@ upstairs.
 "Kitty! Kitty, whom Vronsky was in love with!" thought Anna,
 "the girl he thinks of with love. He's sorry he didn't marry
 her. But me he thinks of with hatred, and is sorry he had
-anything to do with me.")", "KittyKittyVronsk");
+anything to do with me.")",
+               "KittyKittyVronsk");
 }
